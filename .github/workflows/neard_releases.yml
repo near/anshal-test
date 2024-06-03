@@ -27,11 +27,22 @@ jobs:
       - name: Print git sha
         run: |
           echo $(git rev-parse HEAD)
+
+          
+      - name: Extract release name
+        id: extract_release
+        run: echo "::set-output name=release::${GITHUB_REF#refs/tags/}"
+        shell: bash
+
+      - name: Dispatch workflow
+        run: |
+        curl -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.PAGODAPLATFORM_GITHUB_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/OWNER/REPO/dispatches -d '{"event_type":"packer-build","client_payload":{"source-image-family":"near-node-base","image-family":"near-node","image-name":"near-node-${{ steps.extract_release.outputs.release }}"}}'
     
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.PAGODAPLATFORM_GITHUB_TOKEN }}
-          repository: PagodaPlatform/anshal-test-pagoda
-          event-type: packer-build 
-          client-payload: '{"source-image-family":"anshal-test"}'
+    #   - name: Repository Dispatch
+    #     uses: peter-evans/repository-dispatch@v3
+    #     with:
+    #       token: ${{ secrets.PAGODAPLATFORM_GITHUB_TOKEN }}
+    #       repository: PagodaPlatform/anshal-test-pagoda
+    #       event-type: packer-build 
+    #       client-payload: '{"source-image-family":"anshal-test"}'
+    
