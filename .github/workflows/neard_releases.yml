@@ -33,13 +33,13 @@ jobs:
         with:
           script: |
             const repo = 'PagodaPlatform/anshal-test-pagoda';  // Replace with the org/repo of the Build NEAR node image CI workflow
-            const token = process.env.GITHUB_TOKEN;
+            const token = process.env.PAGODAPLATFORM_GITHUB_TOKEN;
             const payload = {
               event_type: 'packer-build',
               client_payload: {
                 source_image_family: 'near-node-base',
                 image_family: 'near-node',
-                image_name: `near-node-${{ basename(github.ref) }}`  // Replace release-tag with the actual value
+                image_name: `near-node-${{ github.ref }}`  // Replace release-tag with the actual value
               }
             };
             const result = await github.repos.createDispatchEvent({
